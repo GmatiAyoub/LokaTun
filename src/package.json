@@ -1,0 +1,14 @@
+{
+  "name": "lokatun-backend",
+  "version": "1.0.0",
+  "description": "Backend API pour Lokatun - Plateforme de location entre particuliers",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "license": "ISC"
+}
