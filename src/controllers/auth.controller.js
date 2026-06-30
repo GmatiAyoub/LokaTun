@@ -65,8 +65,7 @@ const register = async (req, res, next) => {
         email,
         telephone,
         motDePasse: motDePasseHash,
-        // Par défaut LOCATAIRE, sauf si spécifié (et différent d'ADMIN)
-        role: role === 'PROPRIETAIRE' ? 'PROPRIETAIRE' : 'LOCATAIRE',
+        role: 'USER',
       },
       select: {
         id: true,

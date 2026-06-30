@@ -10,14 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Rôles possibles d'un utilisateur
 enum Role {
-  PROPRIETAIRE
-  LOCATAIRE
+  USER
   ADMIN
 }
 
-// Statut du compte utilisateur
 enum UserStatus {
   ACTIF
   SUSPENDU
@@ -31,19 +28,12 @@ model User {
   email         String     @unique
   telephone     String     @unique
   motDePasse    String
-  role          Role       @default(LOCATAIRE)
+  role          Role       @default(USER)
   statut        UserStatus @default(ACTIF)
   noteMoyenne   Float      @default(0)
   nbEvaluations Int        @default(0)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-
-  // Relations (seront complétées dans les sprints suivants)
-  // annonces      Annonce[]
-  // reservations  Reservation[]
-  // evaluationsDonnees   Evaluation[] @relation("EvaluateurRelation")
-  // evaluationsRecues    Evaluation[] @relation("EvalueRelation")
-  // litiges       Litige[]
 
   @@map("users")
 }
