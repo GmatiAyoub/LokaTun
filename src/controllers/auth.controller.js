@@ -130,6 +130,14 @@ const login = async (req, res, next) => {
         message: 'Email ou mot de passe incorrect',
       });
     }
+    // Validation numéro tunisien (8 chiffres, commence par 2,4,5,9)
+const regexTel = /^(2|4|5|9)\d{7}$/;
+if (!regexTel.test(telephone)) {
+  return res.status(400).json({
+    success: false,
+    message: 'Numéro de téléphone invalide. Entrez 8 chiffres tunisiens (ex: 55123456)',
+  });
+}
 
     // Générer le token
     const token = generateToken(utilisateur.id, utilisateur.role);
