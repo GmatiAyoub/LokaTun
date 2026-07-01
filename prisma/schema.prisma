@@ -1,6 +1,3 @@
-// Lokatun - Schéma Prisma
-// Sprint 1 : Modèle User (Auth)
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,6 +18,12 @@ enum UserStatus {
   BANNI
 }
 
+enum StatutAnnonce {
+  ACTIVE
+  INACTIVE
+  SUPPRIMEE
+}
+
 model User {
   id            Int        @id @default(autoincrement())
   nom           String
@@ -35,5 +38,47 @@ model User {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
+  annonces      Annonce[]
+
   @@map("users")
+}
+
+model Annonce {
+  id            Int           @id @default(autoincrement())
+  titre         String
+  description   String
+  categorie     String
+  prixParJour   Float
+  localisation  String
+  statut        StatutAnnonce @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  proprietaire   User          @relation(fields: [proprietaireId], references: [id])
+  proprietaireId Int
+
+  photos        Photo[]
+  disponibilites Disponibilite[]
+
+  @@map("annonces")
+}
+
+model Photo {
+  id         Int     @id @default(autoincrement())
+  url        String
+  publicId   String
+  annonceId  Int
+  annonce    Annonce @relation(fields: [annonceId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}
+
+model Disponibilite {
+  id         Int      @id @default(autoincrement())
+  dateDebut  DateTime
+  dateFin    DateTime
+  annonceId  Int
+  annonce    Annonce  @relation(fields: [annonceId], references: [id], onDelete: Cascade)
+
+  @@map("disponibilites")
 }
