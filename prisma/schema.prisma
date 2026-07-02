@@ -37,6 +37,13 @@ enum MethodePaiement {
   D17
 }
 
+enum StatutLitige {
+  NOUVEAU
+  EN_COURS
+  RESOLU
+  FERME
+}
+
 model User {
   id            Int        @id @default(autoincrement())
   nom           String
@@ -55,6 +62,7 @@ model User {
   reservationsLocataire  Reservation[]  @relation("LocataireRelation")
   evaluationsDonnees     Evaluation[]   @relation("EvaluateurRelation")
   evaluationsRecues      Evaluation[]   @relation("EvalueRelation")
+  litiges                Litige[]
 
   @@map("users")
 }
@@ -73,9 +81,9 @@ model Annonce {
   proprietaire   User          @relation(fields: [proprietaireId], references: [id])
   proprietaireId Int
 
-  photos        Photo[]
+  photos         Photo[]
   disponibilites Disponibilite[]
-  reservations  Reservation[]
+  reservations   Reservation[]
 
   @@map("annonces")
 }
@@ -121,13 +129,14 @@ model Reservation {
   annonceId   Int
 
   evaluations Evaluation[]
+  litiges     Litige[]
 
   @@map("reservations")
 }
 
 model Evaluation {
   id          Int      @id @default(autoincrement())
-  note        Int      // 1 à 5 étoiles
+  note        Int
   commentaire String?
   createdAt   DateTime @default(now())
 
@@ -140,6 +149,24 @@ model Evaluation {
   reservation   Reservation @relation(fields: [reservationId], references: [id])
   reservationId Int
 
-  @@unique([evaluateurId, reservationId]) // Une seule évaluation par réservation par utilisateur (RM-13)
+  @@unique([evaluateurId, reservationId])
   @@map("evaluations")
+}
+
+model Litige {
+  id            Int          @id @default(autoincrement())
+  description   String
+  photoUrl      String?
+  statut        StatutLitige @default(NOUVEAU)
+  resolution    String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  signaleur     User        @relation(fields: [signaleurId], references: [id])
+  signaleurId   Int
+
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId Int
+
+  @@map("litiges")
 }
