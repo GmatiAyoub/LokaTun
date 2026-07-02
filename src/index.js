@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth.routes');
 const annonceRoutes = require('./routes/annonce.routes');
+const reservationRoutes = require('./routes/reservation.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 // ─── Routes ───────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/annonces', annonceRoutes);
+app.use('/api/reservations', reservationRoutes);
 // Route de santé (vérifier que le serveur tourne)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Lokatun API is running 🚀' });
