@@ -135,10 +135,15 @@ const mesReservations = async (req, res, next) => {
     const reservations = await prisma.reservation.findMany({
       where: { locataireId: req.user.id },
       include: {
-        annonce: {
-          include: { photos: true },
-        },
+  annonce: {
+    include: {
+      photos: true,
+      proprietaire: {
+        select: { id: true, nom: true, prenom: true, telephone: true },
       },
+    },
+  },
+},
       orderBy: { createdAt: 'desc' },
     });
 

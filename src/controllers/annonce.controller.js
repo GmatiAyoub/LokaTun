@@ -137,7 +137,7 @@ const detailAnnonce = async (req, res, next) => {
         photos: true,
         disponibilites: true,
         proprietaire: {
-          select: { id: true, nom: true, prenom: true, telephone: true, noteMoyenne: true },
+          select: { id: true, nom: true, prenom: true,noteMoyenne: true },
         },
       },
     });
@@ -259,6 +259,41 @@ const mesAnnonces = async (req, res, next) => {
     next(error);
   }
 };
+// ─── PUT /api/reservations/:id/payer ──────
+const marquerPayee = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ success: false, message: 'Réservation introuvable' });
+    }
+
+    if (reservation.locataireId !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Action non autorisée' });
+    }
+
+    if (reservation.statut !== 'ACCEPTEE') {
+      return res.status(400).json({ success: false, message: 'La réservation doit être acceptée avant paiement' });
+    }
+
+    const updated = await prisma.reservation.update({
+      where: { id: parseInt(id) },
+      data: { statut: 'PAYEE' },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Paiement confirmé avec succès',
+      reservation: updated,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   creerAnnonce,
@@ -267,4 +302,5 @@ module.exports = {
   modifierAnnonce,
   supprimerAnnonce,
   mesAnnonces,
+  marquerPayee,
 };

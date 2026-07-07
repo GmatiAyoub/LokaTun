@@ -27,6 +27,7 @@ enum StatutAnnonce {
 enum StatutReservation {
   EN_ATTENTE
   ACCEPTEE
+  PAYEE
   REFUSEE
   ANNULEE
   TERMINEE
@@ -34,7 +35,7 @@ enum StatutReservation {
 
 enum MethodePaiement {
   CASH
-  D17
+  CARTE
 }
 
 enum StatutLitige {

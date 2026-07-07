@@ -10,6 +10,7 @@ const {
   accepterReservation,
   refuserReservation,
   annulerReservation,
+  marquerPayee,
 } = require('../controllers/reservation.controller');
 const { protect } = require('../middlewares/auth.middleware');
 
@@ -19,6 +20,7 @@ router.get('/mes-reservations', protect, mesReservations);          // GET    /a
 router.get('/recues', protect, reservationsRecues);                 // GET    /api/reservations/recues
 router.put('/:id/accepter', protect, accepterReservation);         // PUT    /api/reservations/:id/accepter
 router.put('/:id/refuser', protect, refuserReservation);           // PUT    /api/reservations/:id/refuser
-router.put('/:id/annuler', protect, annulerReservation);           // PUT    /api/reservations/:id/annuler
+router.put('/:id/annuler', protect, annulerReservation);
+router.put('/:id/payer', protect, marquerPayee);                   // PUT    /api/reservations/:id/payer
 
 module.exports = router;
