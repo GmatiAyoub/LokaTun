@@ -330,6 +330,42 @@ const marquerPayee = async (req, res, next) => {
     next(error);
   }
 };
+// ─── PUT /api/reservations/:id/terminer ───
+const marquerTerminee = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { id: parseInt(id) },
+      include: { annonce: true },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ success: false, message: 'Réservation introuvable' });
+    }
+
+    if (reservation.annonce.proprietaireId !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Action non autorisée' });
+    }
+
+    if (reservation.statut !== 'PAYEE') {
+      return res.status(400).json({ success: false, message: 'La réservation doit être payée avant d\'être terminée' });
+    }
+
+    const updated = await prisma.reservation.update({
+      where: { id: parseInt(id) },
+      data: { statut: 'TERMINEE' },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Réservation marquée comme terminée',
+      reservation: updated,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   creerReservation,
@@ -339,4 +375,5 @@ module.exports = {
   refuserReservation,
   annulerReservation,
   marquerPayee,
+  marquerTerminee,
 };

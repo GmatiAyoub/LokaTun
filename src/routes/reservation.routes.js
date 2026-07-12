@@ -11,16 +11,17 @@ const {
   refuserReservation,
   annulerReservation,
   marquerPayee,
+  marquerTerminee,
 } = require('../controllers/reservation.controller');
 const { protect } = require('../middlewares/auth.middleware');
 
-// Toutes les routes réservations nécessitent un token
-router.post('/', protect, creerReservation);                        // POST   /api/reservations
-router.get('/mes-reservations', protect, mesReservations);          // GET    /api/reservations/mes-reservations
-router.get('/recues', protect, reservationsRecues);                 // GET    /api/reservations/recues
-router.put('/:id/accepter', protect, accepterReservation);         // PUT    /api/reservations/:id/accepter
-router.put('/:id/refuser', protect, refuserReservation);           // PUT    /api/reservations/:id/refuser
+router.post('/', protect, creerReservation);
+router.get('/mes-reservations', protect, mesReservations);
+router.get('/recues', protect, reservationsRecues);
+router.put('/:id/accepter', protect, accepterReservation);
+router.put('/:id/refuser', protect, refuserReservation);
 router.put('/:id/annuler', protect, annulerReservation);
-router.put('/:id/payer', protect, marquerPayee);                   // PUT    /api/reservations/:id/payer
+router.put('/:id/payer', protect, marquerPayee);
+router.put('/:id/terminer', protect, marquerTerminee);
 
 module.exports = router;
