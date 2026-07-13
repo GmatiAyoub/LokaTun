@@ -28,11 +28,11 @@ enum StatutReservation {
   EN_ATTENTE
   ACCEPTEE
   PAYEE
+  COMMISSION_PAYEE
   REFUSEE
   ANNULEE
   TERMINEE
 }
-
 enum MethodePaiement {
   CASH
   CARTE

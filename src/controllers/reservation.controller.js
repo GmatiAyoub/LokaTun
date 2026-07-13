@@ -348,8 +348,11 @@ const marquerTerminee = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Action non autorisée' });
     }
 
-    if (reservation.statut !== 'PAYEE') {
-      return res.status(400).json({ success: false, message: 'La réservation doit être payée avant d\'être terminée' });
+    if (reservation.statut !== 'COMMISSION_PAYEE') {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous devez payer votre commission (7%) avant de terminer la location',
+      });
     }
 
     const updated = await prisma.reservation.update({
@@ -359,7 +362,7 @@ const marquerTerminee = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Réservation marquée comme terminée',
+      message: 'Location terminée avec succès',
       reservation: updated,
     });
   } catch (error) {
@@ -406,6 +409,42 @@ const getNotifications = async (req, res, next) => {
     next(error);
   }
 };
+// ─── PUT /api/reservations/:id/commission-payee ───
+const marquerCommissionPayee = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { id: parseInt(id) },
+      include: { annonce: true },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ success: false, message: 'Réservation introuvable' });
+    }
+
+    if (reservation.annonce.proprietaireId !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Action non autorisée' });
+    }
+
+    if (reservation.statut !== 'PAYEE') {
+      return res.status(400).json({ success: false, message: 'La réservation doit être payée par le locataire avant de payer la commission' });
+    }
+
+    const updated = await prisma.reservation.update({
+      where: { id: parseInt(id) },
+      data: { statut: 'COMMISSION_PAYEE' },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Commission payée avec succès',
+      reservation: updated,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   creerReservation,
   mesReservations,
@@ -416,4 +455,5 @@ module.exports = {
   marquerPayee,
   marquerTerminee,
   getNotifications,
+  marquerCommissionPayee,
 };

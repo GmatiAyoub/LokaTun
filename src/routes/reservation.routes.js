@@ -12,6 +12,7 @@ const {
   annulerReservation,
   marquerPayee,
   marquerTerminee,
+  marquerCommissionPayee,
   getNotifications,
 } = require('../controllers/reservation.controller');
 const { protect } = require('../middlewares/auth.middleware');
@@ -24,6 +25,7 @@ router.put('/:id/accepter', protect, accepterReservation);
 router.put('/:id/refuser', protect, refuserReservation);
 router.put('/:id/annuler', protect, annulerReservation);
 router.put('/:id/payer', protect, marquerPayee);
+router.put('/:id/commission-payee', protect, marquerCommissionPayee);
 router.put('/:id/terminer', protect, marquerTerminee);
 
 module.exports = router;
