@@ -366,7 +366,46 @@ const marquerTerminee = async (req, res, next) => {
     next(error);
   }
 };
+// ─── GET /api/reservations/notifications ──
+const getNotifications = async (req, res, next) => {
+  try {
+    // Réservations EN_ATTENTE reçues (propriétaire)
+    const enAttente = await prisma.reservation.count({
+      where: {
+        annonce: { proprietaireId: req.user.id },
+        statut: 'EN_ATTENTE',
+      },
+    });
 
+    // Réservations PAYEE reçues (propriétaire doit terminer)
+    const payees = await prisma.reservation.count({
+      where: {
+        annonce: { proprietaireId: req.user.id },
+        statut: 'PAYEE',
+      },
+    });
+
+    // Réservations ACCEPTEE locataire (doit payer)
+    const aPayerLocataire = await prisma.reservation.count({
+      where: {
+        locataireId: req.user.id,
+        statut: 'ACCEPTEE',
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      notifications: {
+        enAttente,
+        payees,
+        aPayerLocataire,
+        total: enAttente + payees + aPayerLocataire,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   creerReservation,
   mesReservations,
@@ -376,4 +415,5 @@ module.exports = {
   annulerReservation,
   marquerPayee,
   marquerTerminee,
+  getNotifications,
 };
