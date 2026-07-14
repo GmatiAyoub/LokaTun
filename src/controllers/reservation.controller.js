@@ -380,11 +380,19 @@ const getNotifications = async (req, res, next) => {
       },
     });
 
-    // Réservations PAYEE reçues (propriétaire doit terminer)
+    // Réservations PAYEE reçues (propriétaire doit payer commission)
     const payees = await prisma.reservation.count({
       where: {
         annonce: { proprietaireId: req.user.id },
         statut: 'PAYEE',
+      },
+    });
+
+    // Réservations COMMISSION_PAYEE (propriétaire doit terminer)
+    const commissionPayees = await prisma.reservation.count({
+      where: {
+        annonce: { proprietaireId: req.user.id },
+        statut: 'COMMISSION_PAYEE',
       },
     });
 
@@ -401,8 +409,9 @@ const getNotifications = async (req, res, next) => {
       notifications: {
         enAttente,
         payees,
+        commissionPayees,
         aPayerLocataire,
-        total: enAttente + payees + aPayerLocataire,
+        total: enAttente + payees + commissionPayees + aPayerLocataire,
       },
     });
   } catch (error) {
