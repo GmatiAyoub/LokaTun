@@ -19,7 +19,21 @@ const creerAnnonce = async (req, res, next) => {
         message: 'Tous les champs sont obligatoires (titre, description, catégorie, prix, localisation)',
       });
     }
+    // Vérifier si le propriétaire a des commissions impayées
+const commissionImpayee = await prisma.reservation.findFirst({
+  where: {
+    annonce: { proprietaireId: req.user.id },
+    statut: 'PAYEE',
+  },
+});
 
+if (commissionImpayee) {
+  return res.status(403).json({
+    success: false,
+    message: 'Vous avez une commission impayée. Payez votre commission avant de publier une nouvelle annonce.',
+    reservationId: commissionImpayee.id,
+  });
+}
     // Validation prix minimum (RM-04)
     if (parseFloat(prixParJour) < 1) {
       return res.status(400).json({
