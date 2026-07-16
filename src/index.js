@@ -8,6 +8,7 @@ const reservationRoutes = require('./routes/reservation.routes');
 const evaluationRoutes = require('./routes/evaluation.routes');
 const litigeRoutes = require('./routes/litige.routes');
 const adminRoutes = require('./routes/admin.routes');
+const paiementRoutes = require('./routes/paiement.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/reservations', reservationRoutes);
 app.use('/api/evaluations', evaluationRoutes);
 app.use('/api/litiges', litigeRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/paiement', paiementRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Lokatun API is running 🚀' });
